@@ -8,16 +8,43 @@ Created on Fri Jan 20 14:05:07 2023
 
 import numpy as np
 import scipy.linalg as nla
+import igraph as ig
+
+import csv
+
+data = list()
+
+with open("wikispeedia_paths-and-graph/paths_finished.tsv") as fd:
+    rd = csv.reader(fd, delimiter="\t", quotechar='"')
+    for row in rd:
+        try :
+            tmp = list()
+            tmp.append(row[0])
+            tmp.append(int(row[1]))
+            tmp.append(int(row[2]))
+            tmp.append(row[3].split(";"))
+            tmp.append(row[4])
+            data.append(tmp)
+        except IndexError :
+            tmp = list()
+
+G = ig.Graph()
+
+for ligne in data:
+    for i in range(len(ligne[3])-1):
+        G.add_vertex(ligne[3][i])
+        G.add_vertex(ligne[3][i+1])
+        G.add_edge(ligne[3][i], ligne[3][i+1])
+    
+
+print(G.Adjacency())
 
 
-# import csv
 
-# data = list()
 
-# with open("wikispeedia_paths-and-graph/paths_finished.tsv") as fd:
-#     rd = csv.reader(fd, delimiter="\t", quotechar='"')
-#     for row in rd:
-#         data.append(row)
+
+
+
 
 
 def norm(x):
