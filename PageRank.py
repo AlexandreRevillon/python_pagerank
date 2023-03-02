@@ -113,7 +113,7 @@ def adjacence_graph():
 
  
        
-def pagerank_power_method(P, epsilon=1e-8, max_iter=1000, dump=0.85):
+def pagerank_power_method(P, epsilon=1e-8, max_iter=1000, damp=0.85):
     """Fonction qui calcule le PageRank d'un graphe
 
     Args:
@@ -131,7 +131,7 @@ def pagerank_power_method(P, epsilon=1e-8, max_iter=1000, dump=0.85):
     i = 0
     while norm(v-v_old) > epsilon and i < max_iter:
         v_old = v
-        v = dump*P.dot(v) + (1-dump)/n
+        v = damp*P.dot(v) + (1-damp)/n
         i += 1
     return v
     
