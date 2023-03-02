@@ -98,9 +98,26 @@ def adjacence_graph():
     
         
 def l1(x):
+    """Fonction qui calcule la norme L1 d'un vecteur
+
+    Args:
+        x (array): Vecteur dont on veut calculer la norme L1
+
+    Returns:
+        array: Norme L1 du vecteur
+    """
     return np.sum(np.abs(x))
     
-def get_google_matrix(A, d=0.15):
+def get_google_matrix(A, d=0.85):
+    """Fonction qui renvoie la matrice de Google
+
+    Args:
+        A (array): Matrice d'adjacence du graphe
+        d (float, optional): damping factor. Defaults to 0.15.
+
+    Returns:
+        array: Matrice de Google
+    """
     n = A.shape[0]
     A = A.transpose()
     
@@ -118,7 +135,18 @@ def get_google_matrix(A, d=0.15):
     return M    
     
     
-def pagerank_power(A, d=0.15, max_iter=100, eps=1e-9):
+def pagerank_power(A, d=0.85, max_iter=100, eps=1e-9):
+    """Fonction qui calcule le vecteur de PageRank
+
+    Args:
+        A (array): Matrice d'adjacence du graphe
+        d (float, optional): damping factor. Defaults to 0.85.
+        max_iter (int, optional):nombre d'itérations maximal. Defaults to 100.
+        eps (float, optional): tolerance. Defaults to 1e-9.
+
+    Returns:
+        array: vecteur de PageRank
+    """
     M = get_google_matrix(A, d=d)
     n = A.shape[0]
     V = np.ones(n)/n
