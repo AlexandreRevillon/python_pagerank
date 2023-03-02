@@ -5,12 +5,19 @@ Created on Fri Jan 20 14:05:07 2023
 
 @author: arevillo
 """
+###################### Import des libraries ######################
 
 import numpy as np
 import scipy.linalg as nla
 import igraph as ig
 import pandas as pd
 import csv
+
+
+
+
+
+#################{# Déclarations des fonctions ###################
 
 def norm(x):
     """Fonction qui calcule la norme euclidienne d'un vecteur
@@ -25,6 +32,7 @@ def norm(x):
     for i in range(x.shape[0]):
         somme += x[i]**2
     return np.sqrt(somme)
+
 
 
 def import_tsv():
@@ -48,6 +56,7 @@ def import_tsv():
             except IndexError:
                 tmp = list()
     return data
+
 
 
 def points_et_transitions():
@@ -94,8 +103,7 @@ def adjacence_graph():
     G.add_edges(transitions)
     return pd.DataFrame(G.get_adjacency().data, columns=points, index=points)   
     
-    
-    
+
         
 def l1(x):
     """Fonction qui calcule la norme L1 d'un vecteur
@@ -107,6 +115,8 @@ def l1(x):
         array: Norme L1 du vecteur
     """
     return np.sum(np.abs(x))
+    
+    
     
 def get_google_matrix(A, d=0.85):
     """Fonction qui renvoie la matrice de Google
@@ -135,6 +145,7 @@ def get_google_matrix(A, d=0.85):
     return M    
     
     
+    
 def pagerank_power(A, d=0.85, max_iter=100, eps=1e-9):
     """Fonction qui calcule le vecteur de PageRank
 
@@ -159,6 +170,34 @@ def pagerank_power(A, d=0.85, max_iter=100, eps=1e-9):
 
 
 
+def pagerank_personalized(A, personalization, d=0.85, max_iter=100, eps=1e-9):
+    """Fonction qui calcule le vecteur de PageRank personnalisé
+
+    Args:
+        A (array): Matrice d'adjacence du graphe
+        d (float, optional): damping factor. Defaults to 0.85.
+        max_iter (int, optional):nombre d'itérations maximal. Defaults to 100.
+        eps (float, optional): tolerance. Defaults to 1e-9.
+        personalization (array): vecteur de personalisation.
+
+    Returns:
+        array: vecteur de PageRank
+    """
+    M = get_google_matrix(A, d=d)
+    n = A.shape[0]
+    V = np.ones(n)/n
+    for _ in range(max_iter):
+        V_last = V
+        V = d*np.dot(M, V) + (1-d)*personalization
+        if  l1(V-V_last)/n < eps:
+            return V
+    return V
+
+
+
+
+
+###################### Programme principal #######################
 
 A = adjacence_graph()
 colnames = A.columns
@@ -170,16 +209,35 @@ print(pg.sum())
 
 
 
-# A_ex1 = np.array([[0, 1, 1, 0, 0, 0],
-#                   [0, 0, 0, 0, 0, 0],
-#                   [1, 1, 0, 0, 1, 0],
-#                   [0, 0, 0, 0, 1, 1],
-#                   [0, 0, 0, 1, 0, 1],
-#                   [0, 0, 0, 1, 0, 0]], dtype='float64')
 
-# pg_ex1 = pagerank_power(A_ex1)
-# print(pg_ex1)
 
+################# Exercice du travail personnel ##################
+
+A_ex1 = np.array([[0, 1, 1, 0, 0, 0],
+                  [0, 0, 0, 0, 0, 0],
+                  [1, 1, 0, 0, 1, 0],
+                  [0, 0, 0, 0, 1, 1],
+                  [0, 0, 0, 1, 0, 1],
+                  [0, 0, 0, 1, 0, 0]], dtype='float64')
+
+
+pg_ex1 = pagerank_power(A_ex1)
+print("page rank methode de la puissance:", pg_ex1)
+
+
+personalization = np.ones(A_ex1.shape[0])
+personalization[4] = 2
+personalization /= personalization.sum()
+
+print("personnalisation: ", personalization)
+pgp_ex1 = pagerank_personalized(A_ex1, personalization)
+print("page rank personnalisé:", pgp_ex1)
+
+
+
+
+
+############################## Tests #############################
 
 # ex= np.array([[1., 0., 0., 0., 0., 0., 0., 1.],
 #             [0., 1., 0., 0., 1., 0., 0., 0.],
@@ -198,17 +256,10 @@ print(pg.sum())
 #                   [0, 0, 0, 1], 
 #                   [0, 1, 0, 0]])
 
-# pg_test3 = pagerank_power_method(test3)
+# pg_test3 = pagerank_power(test3)
 # print(pg_test3)
 # print(pg_test3.sum())
 
 
-# test = np.array([[1,1,1,0],[1,0,0,1],[1,0,0,0],[0,1,0,1]])
-# test = pd.DataFrame(test)
 
-# print(test)
-# print(test.transpose())
 
-# test2 = normalize_dataframe(test.transpose())
-# print(test2)
-# print(test2.sum(axis=0))
