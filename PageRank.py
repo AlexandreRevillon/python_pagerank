@@ -50,10 +50,6 @@ def import_tsv():
     return data
 
 
-
-
-    
-
 def points_et_transitions():
     """Fonction qui renvoie la liste des points et la liste des transitions
 
@@ -72,7 +68,6 @@ def points_et_transitions():
         liste_trans = ligne[3]
         if len(liste_trans) > 1:
             i = 0
-            transitions.add((liste_trans[1], liste_trans[0]))
             while i < len(liste_trans)-1:
                 if liste_trans[i+1] == "<":
                     transitions.add((liste_trans[i], liste_trans[i-1]))
@@ -82,21 +77,9 @@ def points_et_transitions():
                 else:
                     transitions.add((liste_trans[i], liste_trans[i+1]))
                     i += 1
-            transitions.add((liste_trans[i], liste_trans[i-1]))
     return list(points), list(transitions)
 
 
-def normalize_dataframe(df):
-    """Fonction qui normalise les colonnes d'un dataframe
-
-    Args:
-        df (DataFrame): Dataframe dont on veut normaliser les colonnes
-
-    Returns:
-        DataFrame: Dataframe dont les colonnes sont normalisées
-    """
-    df = df.div(df.sum(axis=0), axis=1)
-    return df
 
 def adjacence_graph():
     """Fonction qui renvoie la matrice d'adjacence du graphe
@@ -109,55 +92,85 @@ def adjacence_graph():
     for p in points:
         G.add_vertex(name=p)
     G.add_edges(transitions)
-    return pd.DataFrame(G.get_adjacency().data, columns=points, index=points)
-
- 
-       
-def pagerank_power_method(P, epsilon=1e-8, max_iter=1000, damp=0.85):
-    """Fonction qui calcule le PageRank d'un graphe
-
-    Args:
-        P (DataFrame): Matrice de transition normalisée
-        epsilon (float, optional): Précision du calcul. Defaults to 1e-8.
-        max_iter (int, optional): Nombre maximal d'itérations. Defaults to 1000.
-        dump (float, optional): Paramètre de damping. Defaults to 0.85.
-
-    Returns:
-        vecteur np.array: PageRank du graphe
-    """
-    n = P.shape[0]
-    v = np.ones(n)/n
-    v_old = np.zeros(n)
-    i = 0
-    while norm(v-v_old) > epsilon and i < max_iter:
-        v_old = v
-        v = damp*P.dot(v) + (1-damp)/n
-        i += 1
-    return v
+    return pd.DataFrame(G.get_adjacency().data, columns=points, index=points)   
     
     
+    
+        
+def l1(x):
+    return np.sum(np.abs(x))
+    
+def get_google_matrix(A, d=0.15):
+    n = A.shape[0]
+    A = A.transpose()
+    
+    # for sink nodes
+    is_sink = np.sum(A, axis=0) == 0
+    B = (np.ones_like(A) - np.identity(n)) / (n-1)
+    A[:, is_sink] += B[:, is_sink]
+    
+    D_inv = np.diag(1/np.sum(A, axis=0))
+    M = np.dot(A, D_inv) 
+    
+    # for disconnected components
+    M = (1-d)*M + d*np.ones((n,n))/n
+    
+    return M    
+    
+    
+def pagerank_power(A, d=0.15, max_iter=100, eps=1e-9):
+    M = get_google_matrix(A, d=d)
+    n = A.shape[0]
+    V = np.ones(n)/n
+    for _ in range(max_iter):
+        V_last = V
+        V = np.dot(M, V)
+        if  l1(V-V_last)/n < eps:
+            return V
+    return V
+
+
+
 
 A = adjacence_graph()
+colnames = A.columns
 
-P = normalize_dataframe(A.transpose())
+pg = pd.DataFrame(pagerank_power(A.to_numpy(dtype='float64')), index = colnames)
 
-pg = pagerank_power_method(P)
-
-print(pg.sort_values(ascending=False))
+print(pg.sort_values(by=0, ascending=False))
 print(pg.sum())
 
 
 
+# A_ex1 = np.array([[0, 1, 1, 0, 0, 0],
+#                   [0, 0, 0, 0, 0, 0],
+#                   [1, 1, 0, 0, 1, 0],
+#                   [0, 0, 0, 0, 1, 1],
+#                   [0, 0, 0, 1, 0, 1],
+#                   [0, 0, 0, 1, 0, 0]], dtype='float64')
+
+# pg_ex1 = pagerank_power(A_ex1)
+# print(pg_ex1)
 
 
+# ex= np.array([[1., 0., 0., 0., 0., 0., 0., 1.],
+#             [0., 1., 0., 0., 1., 0., 0., 0.],
+#             [1., 1., 0., 0., 0., 0., 0., 0.],
+#             [0., 0., 1., 0., 0., 0., 0., 1.],
+#             [0., 1., 1., 0., 0., 0., 0., 0.],
+#             [0., 1., 0., 0., 1., 0., 0., 0.],
+#             [1., 1., 0., 0., 0., 0., 0., 0.],
+#             [0., 1., 1., 0., 0., 0., 0., 0.]])
+
+# print(pagerank_power(ex))
 
 
-# test3 = np.array([[0,1,0],
-#                 [0,0,1],
-#                 [1,1,0]])
+# test3 = np.array([[0, 1, 0, 0], 
+#                   [1, 0, 1, 0], 
+#                   [0, 0, 0, 1], 
+#                   [0, 1, 0, 0]])
 
-# pg_test3 = pagerank_power_method(normalize_dataframe(pd.DataFrame(test3.transpose())))
-
+# pg_test3 = pagerank_power_method(test3)
 # print(pg_test3)
 # print(pg_test3.sum())
 
