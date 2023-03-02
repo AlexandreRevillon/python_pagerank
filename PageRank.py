@@ -72,14 +72,17 @@ def points_et_transitions():
         liste_trans = ligne[3]
         if len(liste_trans) > 1:
             i = 0
+            transitions.add((liste_trans[1], liste_trans[0]))
             while i < len(liste_trans)-1:
                 if liste_trans[i+1] == "<":
+                    transitions.add((liste_trans[i], liste_trans[i-1]))
                     del liste_trans[i]
                     del liste_trans[i]
                     i -= 1             
                 else:
                     transitions.add((liste_trans[i], liste_trans[i+1]))
                     i += 1
+            transitions.add((liste_trans[i], liste_trans[i-1]))
     return list(points), list(transitions)
 
 
@@ -140,7 +143,7 @@ P = normalize_dataframe(A.transpose())
 
 pg = pagerank_power_method(P)
 
-print(pg)
+print(pg.sort_values(ascending=False))
 print(pg.sum())
 
 
@@ -149,14 +152,14 @@ print(pg.sum())
 
 
 
-test3 = np.array([[0,1,0],
-                [0,0,1],
-                [1,1,0]])
+# test3 = np.array([[0,1,0],
+#                 [0,0,1],
+#                 [1,1,0]])
 
-pg_test3 = pagerank_power_method(normalize_dataframe(pd.DataFrame(test3.transpose())))
+# pg_test3 = pagerank_power_method(normalize_dataframe(pd.DataFrame(test3.transpose())))
 
-print(pg_test3)
-print(pg_test3.sum())
+# print(pg_test3)
+# print(pg_test3.sum())
 
 
 # test = np.array([[1,1,1,0],[1,0,0,1],[1,0,0,0],[0,1,0,1]])
