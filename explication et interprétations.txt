@@ -1,0 +1,28 @@
+Interprétations des résultats:
+On remarque que la page ayant lle score de pagerank la plus élevé est la page "United States" avec un score de pagerank presque 2 fois plus 
+élevé que la second page qui est la page "Europe".
+On peux donc en déduire que la Page United States est la page la plus visité par les participant du jeux. La page United State est donc une page que les
+joueurs estiment comme étant une page très intéressante pour obtenir d'autres liens leur permettant d'approcher leurs but.
+
+D'ailleurs le top 5 ordonné des pages les plus visité dans les parcours des joueurs sont les suivantes:
+- United_States          
+- Europe                 
+- United_Kingdom         
+- England                
+- World_War_II           
+
+
+
+
+
+Variation des paramètres:
+avec une tolérance trop grande et un dumping factor trop faible, on obtient un score de page rank identique pour toutes les pages.
+Plus la tolérance est faible et plus les score des premières pages sont grand et ceux des dernières pages sont petit. Une tolérance trés faible permet 
+d'obtenir de meilleur résultats plus précis.
+Plus le dumping factor est élevé, et plus la différence de score entre les première et dernières page (en termes de classement par score de pagerank) augmente.
+Si le dumping factor est trop faible, toutes les pages ont un score de pagerank proches, tandis qu'a l'inverse on observe une réel différence.
+
+
+
+
+
