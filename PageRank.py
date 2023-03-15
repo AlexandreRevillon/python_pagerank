@@ -12,6 +12,7 @@ import scipy.linalg as nla
 import igraph as ig
 import pandas as pd
 import csv
+import time
 
 
 
@@ -104,63 +105,96 @@ def adjacence_graph():
     return pd.DataFrame(G.get_adjacency().data, columns=points, index=points)   
     
 
-    
-def l1(x):
-    return np.sum(np.abs(x))
-    
-    
-    
-def get_google_matrix(G, d=0.15):
-    """Fonction qui renvoie la matrice de Google
+
+def pagerank(matrice_adjacence, d=0.85, max_iter=100, tol=1e-6):
+    """Fonction permettant de calculer les valeurs pagerank d'une matrice d'adjacence
 
     Args:
-        A (array): Matrice d'adjacence du graphe
-        d (float, optional): damping factor. Defaults to 0.15.
+        matrice_adjacence (matrix): matrice d'ajacence du graphe
+        d (float, optional): dumping factor. Defaults to 0.85.
+        max_iter (int, optional): nombre maximal d'itération. Defaults to 100.
+        tol (float, optional): tolérance. Defaults to 1e-6.
 
     Returns:
-        array: Matrice de Google
+        vector: matrice des valeurs de page rank
     """
-    n = G.shape[0]
-    A = G.transpose()
+    n = matrice_adjacence.shape[0]
     
-    # for sink nodes
-    is_sink = np.sum(A, axis=0) == 0
-    B = (np.ones_like(A) - np.identity(n)) / (n-1)
-    A[:, is_sink] += B[:, is_sink]
+    # Calculer la matrice de transition (stochastique)
+    nb_lien_out = np.sum(matrice_adjacence, axis=1)
+    matrice_transition = np.zeros((n, n))
     
-    D_inv = np.diag(1/np.sum(A, axis=0))
-    M = np.dot(A, D_inv) 
+    for i in range(n):
+        if nb_lien_out[i] > 0:
+            matrice_transition[i, :] = matrice_adjacence[i, :] / nb_lien_out[i]
+        else:
+            matrice_transition[i, :] = 1 / n
     
-    # for disconnected components
-    M = (1-d)*M + d*np.ones((n,n))/n
+    # Appliquer le facteur d'amortissement d (dumping factor)
+    matrice_transition = d * matrice_transition + (1 - d) * (1 / n) * np.ones((n, n))
     
-    return M    
+    # Initialiser le vecteur PageRank
+    pagerank = np.ones(n) / n
     
-    
-    
-def pagerank_power(G, d=0.85, max_iter=1000000, eps=1e-9):
-    M = get_google_matrix(G)
-    n = G.shape[0]
-    V = np.ones(n)/n
+    # Appliquer la méthode de la puissance
     for _ in range(max_iter):
-        V_last = V
-        V = np.dot(M, V)
-        if  l1(V-V_last)/n < eps:
-            return V
-    return V
+        pagerank_new = np.dot(matrice_transition.T, pagerank)
+        
+        if norm(pagerank_new - pagerank) < tol:
+            break
+        
+        pagerank = pagerank_new
+    
+    return pagerank
+    
+    
+    
+def personalized_pagerank(matrice_adjacence, v, d=0.85, max_iter=100, tol=1e-6):
+    """Fonction permettant de calculer les valeurs pagerank d'une matrice d'adjacence à partir d'un vecteur de personalisation
 
+    Args:
+        matrice_adjacence (matrix): matrice d'ajacence du graphe
+        v (vector): vecteur de personalisation
+        d (float, optional): dumping factor. Defaults to 0.85.
+        max_iter (int, optional): nombre maximal d'itération. Defaults to 100.
+        tol (float, optional): tolérance. Defaults to 1e-6.
 
-
-def pagerank_power_personalized(G, p, d=0.85, max_iter=1000000, eps=1e-9):
-    M = get_google_matrix(G, d=d)
-    n = G.shape[0]
-    v = np.ones(n)/n
+    Returns:
+        vector: matrice des valeurs de page rank personnalisé
+    """
+    n = matrice_adjacence.shape[0]
+    
+    # Vérifier si la somme de v est égale à 1
+    assert np.isclose(np.sum(v), 1), "Le vecteur de préférence personnel doit sommer à 1"
+    
+    # Calculer la matrice de transition (stochastique)
+    nb_lien_out = np.sum(matrice_adjacence, axis=1)
+    matrice_transition = np.zeros((n, n))
+    
+    for i in range(n):
+        if nb_lien_out[i] > 0:
+            matrice_transition[i, :] = matrice_adjacence[i, :] / nb_lien_out[i]
+        else:
+            matrice_transition[i, :] = 1 / n
+    
+    # Appliquer le facteur d'amortissement d et le vecteur de préférence personnel v
+    matrice_transition = d * matrice_transition + (1 - d) * np.outer(np.ones(n), v)
+    
+    # Initialiser le vecteur PageRank
+    pagerank = np.ones(n) / n
+    
+    # Appliquer la méthode de la puissance
     for _ in range(max_iter):
-        v_last = v
-        v = (1-d)*np.dot(M, v) + d*p
-        if l1(v-v_last)/n < eps:
-            return v
-    return v
+        pagerank_new = np.dot(matrice_transition.T, pagerank)
+        
+        if norm(pagerank_new - pagerank) < tol:
+            break
+        
+        pagerank = pagerank_new
+    
+    return pagerank
+    
+
 
 
 
@@ -168,13 +202,51 @@ def pagerank_power_personalized(G, p, d=0.85, max_iter=1000000, eps=1e-9):
 
 ###################### Programme principal #######################
 
-# A = adjacence_graph()
-# colnames = A.columns
+# Récupération de la matrice d'adjacence du graphe
+A = adjacence_graph()
+colnames = A.columns
 
-# pg = pd.DataFrame(pagerank_power(A.to_numpy(dtype='float64')), index = colnames)
+# Calcul des valeurs de page rank
+pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64')), index = colnames)
 
-# print(pg.sort_values(by=0, ascending=False))
-# print(pg.sum())
+print("Valeurs de page rank:")
+print(pr.sort_values(by=0, ascending=False)*100)
+print("\nSomme des valeurs de pagerank: ", pr.sum()[0])
+
+print("\n"*2)
+
+# Variation de paramètre
+start = time.time()
+pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.15, tol=0.01), index = colnames)
+stop = time.time()
+duree = stop - start
+print("Valeurs de page rank avec d=0.15 et tol=0.01:")
+print(pr.sort_values(by=0, ascending=False)*100)
+print("Temps d'exécution: ", duree, "s")
+
+start = time.time()
+pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.15, tol=0.0001), index = colnames)
+stop = time.time()
+duree = stop - start
+print("\nValeurs de page rank avec d=0.15 et tol=0.0001:")
+print(pr.sort_values(by=0, ascending=False)*100)
+print("Temps d'exécution: ", duree, "s")
+
+start = time.time()
+pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.85, tol=0.01), index = colnames)
+stop = time.time()
+duree = stop - start
+print("\nValeurs de page rank avec d=0.85 et tol=0.01:")
+print(pr.sort_values(by=0, ascending=False)*100)
+print("Temps d'exécution: ", duree, "s")
+
+start = time.time()
+pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.85, tol=0.0001), index = colnames)
+stop = time.time()
+duree = stop - start
+print("\nValeurs de page rank avec d=0.85 et tol=0.0001:")
+print(pr.sort_values(by=0, ascending=False)*100)
+print("Temps d'exécution: ", duree, "s")
 
 
 
@@ -182,82 +254,67 @@ def pagerank_power_personalized(G, p, d=0.85, max_iter=1000000, eps=1e-9):
 
 ################# Exercice du travail personnel ##################
 
-A_ex1 = np.array([[0, 1, 1, 0, 0, 0],
-                  [0, 0, 0, 0, 0, 0],
-                  [1, 1, 0, 0, 1, 0],
-                  [0, 0, 0, 0, 1, 1],
-                  [0, 0, 0, 1, 0, 1],
-                  [0, 0, 0, 1, 0, 0]], dtype='float64')
-
-print("\n"*2)
-
-pg_ex1 = pagerank_power(A_ex1)
-print("page rank methode de la puissance:", pg_ex1)
+# #Matrice d'adjacence de l'exercice 1
+# A_ex1 = np.array([[0, 1, 1, 0, 0, 0],
+#                   [0, 0, 0, 0, 0, 0],
+#                   [1, 1, 0, 0, 1, 0],
+#                   [0, 0, 0, 0, 1, 1],
+#                   [0, 0, 0, 1, 0, 1],
+#                   [0, 0, 0, 1, 0, 0]], dtype='float64')
 
 
-personalization = np.ones(A_ex1.shape[0])
-personalization[4] = 5
-personalization /= personalization.sum()
+# print("\n"*2)
 
-print("\npersonnalisation: ", personalization)
-pgp_ex1 = pagerank_power_personalized(A_ex1, personalization)
-print("page rank personnalisé:", pgp_ex1)
+# #Calcul des valeurs de pagerank
+# pr=pagerank(A_ex1, 0.85)
+# print("\nValeurs de page rank:\n\t", pr)
+# print("\tSomme des valeurs de pagerank:", pr.sum())
 
-
-personalization = np.ones(A_ex1.shape[0])
-personalization[0] = 5
-personalization /= personalization.sum()
-
-print("\npersonnalisation: ", personalization)
-pgp_ex1 = pagerank_power_personalized(A_ex1, personalization)
-print("page rank personnalisé:", pgp_ex1)
+# #Calcul des valeurs de pagerank personnalisé pour le noeud 1
+# personalization = np.zeros(A_ex1.shape[0])
+# personalization[0] = 1
+# pr=personalized_pagerank(A_ex1, personalization, 0.85)
+# print("\nValeurs de page rank avec personnalisation noeud 1:\n\t", pr)
+# print("\tSomme des valeurs de pagerank:", pr.sum())
 
 
+# #Calcul des valeurs de pagerank personnalisé pour le noeud 5
+# personalization = np.zeros(A_ex1.shape[0])
+# personalization[4] = 1
+# pr=personalized_pagerank(A_ex1, personalization, 0.85)
+# print("\nValeurs de page rank avec personnalisation noeud 5:\n\t", pr)
+# print("\tSomme des valeurs de pagerank:", pr.sum())
 
 
-
-############################## Tests #############################
-
-# ex= np.array([[1., 0., 0., 0., 0., 0., 0., 1.],
-#             [0., 1., 0., 0., 1., 0., 0., 0.],
-#             [1., 1., 0., 0., 0., 0., 0., 0.],
-#             [0., 0., 1., 0., 0., 0., 0., 1.],
-#             [0., 1., 1., 0., 0., 0., 0., 0.],
-#             [0., 1., 0., 0., 1., 0., 0., 0.],
-#             [1., 1., 0., 0., 0., 0., 0., 0.],
-#             [0., 1., 1., 0., 0., 0., 0., 0.]])
-
-# print(pagerank_power(ex))
-
-
-# test3 = np.array([[0, 1, 0, 0], 
-#                   [1, 0, 1, 0], 
-#                   [0, 0, 0, 1], 
-#                   [0, 1, 0, 0]])
-
-# pg_test3 = pagerank_power(test3)
-# print(pg_test3)
-# print(pg_test3.sum())
+# print("\n"*2)
 
 
 
-############### Vérification avec library pagerank ###############
-
-from fast_pagerank import pagerank_power
-
-pr=pagerank_power(A_ex1, p=0.85)
-print("\nVérification pagerank:", pr)
 
 
-personalization = np.ones(A_ex1.shape[0])
-personalization[0] = 5
-pr=pagerank_power(A_ex1, p=0.85, personalize=personalization)
-print("Vérification personnalisation noeud 1:", pr)
+############### Tests et vérification avec library pagerank ###############
+
+# from fast_pagerank import pagerank_power
+
+# pr=pagerank(A_ex1, 0.85)
+# print("\nPagerank:", pr)
+# print(pr.sum())
+
+# pr=pagerank_power(A_ex1, p=0.85)
+# print("\nVérification pagerank:", pr)
 
 
-personalization = np.ones(A_ex1.shape[0])
-personalization[4] = 5
-pr=pagerank_power(A_ex1, p=0.85, personalize=personalization)
-print("Vérification personnalisation noeud 5:", pr)
+# personalization = np.zeros(A_ex1.shape[0])
+# personalization[4] = 1
+# pr=personalized_pagerank(A_ex1, personalization, 0.85)
+# print("Personnalisation noeud 1:", pr)
 
-print("\n"*2)
+
+# personalization = np.zeros(A_ex1.shape[0])
+# personalization[4] = 1
+# pr=pagerank_power(A_ex1, p=0.85, personalize=personalization)
+# print("Vérification personnalisation noeud 5:", pr)
+
+# print("\n"*2)
+
+
