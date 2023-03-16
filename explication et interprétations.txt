@@ -22,7 +22,21 @@ d'obtenir de meilleur résultats plus précis.
 Plus le dumping factor est élevé, et plus la différence de score entre les première et dernières page (en termes de classement par score de pagerank) augmente.
 Si le dumping factor est trop faible, toutes les pages ont un score de pagerank proches, tandis qu'a l'inverse on observe une réel différence.
 
+On a regarder l'impact en terme de temps d'exéctution du changement des paramètre, mais avec les paramètre que l'on a pris nous n'avons pas observé de différence
+significative. En revanche, il est logique de penser que plus la tolerance est petite et plus le temps d'exécution est long.
 
 
 
 
+
+Personnalisation:
+Personnaliser les nœuds avec un score PageRank élevé : Ces nœuds sont considérés comme les plus importants ou les plus pertinents dans le réseau. 
+Personnaliser ces nœuds peut avoir un impact significatif sur la qualité des résultats de recherche.
+On va donc ici personnaliser le top 5 des noeuds en terme de score pagerank.
+
+Par rapport au pagerank original, les pages que l'on a décidé de personnaliser et les pages connécté a ces dernières ont vu leur score de page rank augmenter.
+De ce fait l'ordre des pages à changer. Les premières pages n'ont pas bougé étant données que ce sont elles que nous avons décidé de personnaliser. En revanche, pour les autres pages,
+il y a eu un changement d'ordre. 
+
+Nous avons aussi décidé de personnaliser les dernières pages afin de voir les conséquence que cela aura sur les score de page rank. Cela a eu pour effet de totalement changer les scores
+et le classement des pages. En effet, le top 5 est totalement différent. Ce sont les pages personnalisée qui se retourvent maintenant en tete de clasement de score pagerank.

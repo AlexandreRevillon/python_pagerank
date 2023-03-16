@@ -208,45 +208,74 @@ colnames = A.columns
 
 # Calcul des valeurs de page rank
 pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64')), index = colnames)
+pr = pr.sort_values(by=0, ascending=False)
 
 print("Valeurs de page rank:")
-print(pr.sort_values(by=0, ascending=False))
+print(pr)
 print("\nSomme des valeurs de pagerank: ", pr.sum()[0])
 
 print("\n"*2)
 
 # Variation de paramètre
 start = time.time()
-pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.15, tol=0.01), index = colnames)
+pr1 = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.15, tol=0.01), index = colnames)
+pr1 = pr1.sort_values(by=0, ascending=False)
 stop = time.time()
 duree = stop - start
 print("Valeurs de page rank avec d=0.15 et tol=0.01:")
-print(pr.sort_values(by=0, ascending=False))
+print(pr1)
 print("Temps d'exécution: ", duree, "s")
 
 start = time.time()
-pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.15, tol=0.0001), index = colnames)
+pr2 = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.15, tol=0.0001), index = colnames)
+pr2 = pr2.sort_values(by=0, ascending=False)
 stop = time.time()
 duree = stop - start
 print("\nValeurs de page rank avec d=0.15 et tol=0.0001:")
-print(pr.sort_values(by=0, ascending=False))
+print(pr2)
 print("Temps d'exécution: ", duree, "s")
 
 start = time.time()
-pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.85, tol=0.01), index = colnames)
+pr3 = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.85, tol=0.01), index = colnames)
+pr3 = pr3.sort_values(by=0, ascending=False)
 stop = time.time()
 duree = stop - start
 print("\nValeurs de page rank avec d=0.85 et tol=0.01:")
-print(pr.sort_values(by=0, ascending=False))
+print(pr3)
 print("Temps d'exécution: ", duree, "s")
 
 start = time.time()
-pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.85, tol=0.0001), index = colnames)
+pr4 = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.85, tol=0.0001), index = colnames)
+pr4 = pr4.sort_values(by=0, ascending=False)
 stop = time.time()
 duree = stop - start
 print("\nValeurs de page rank avec d=0.85 et tol=0.0001:")
-print(pr.sort_values(by=0, ascending=False))
+print(pr4)
 print("Temps d'exécution: ", duree, "s")
+
+
+#Personalisation des premiers noeud du graphe + calcul de pagerank
+v = np.zeros(A.shape[0])
+for page in pr.iloc[[0,1,2,3,4]].index:
+    v[colnames.get_loc(page)] = 1/5
+pr5 = pd.DataFrame(personalized_pagerank(A.to_numpy(dtype='float64'), v), index = colnames)
+pr5 = pr5.sort_values(by=0, ascending=False)
+print("Valeurs de page rank personnalsé:")
+print(pr5)
+print("\nSomme des valeurs de pagerank: ", pr.sum()[0])
+
+
+#Personalisation des dernières noeud du graphe + calcul de pagerank
+v = np.zeros(A.shape[0])
+last = len(colnames) - 1
+print(pr.iloc[[last,last-1,last-2,last-3,last-4]].index)
+for page in pr.iloc[[last,last-1,last-2,last-3,last-4]].index:
+    v[colnames.get_loc(page)] = 1/5
+pr5 = pd.DataFrame(personalized_pagerank(A.to_numpy(dtype='float64'), v), index = colnames)
+pr5 = pr5.sort_values(by=0, ascending=False)
+print("Valeurs de page rank personnalsé:")
+print(pr5)
+print("\nSomme des valeurs de pagerank: ", pr.sum()[0])
 
 
 
