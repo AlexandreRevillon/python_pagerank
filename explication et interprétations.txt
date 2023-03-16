@@ -1,5 +1,5 @@
 Interprétations des résultats:
-On remarque que la page ayant lle score de pagerank la plus élevé est la page "United States" avec un score de pagerank presque 2 fois plus 
+On remarque que la page ayant le score de pagerank la plus élevé est la page "United States" avec un score de pagerank presque 2 fois plus 
 élevé que la second page qui est la page "Europe".
 On peux donc en déduire que la Page United States est la page la plus visité par les participant du jeux. La page United State est donc une page que les
 joueurs estiment comme étant une page très intéressante pour obtenir d'autres liens leur permettant d'approcher leurs but.

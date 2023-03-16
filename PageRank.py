@@ -18,7 +18,7 @@ import time
 
 
 
-#################{# Déclarations des fonctions ###################
+################### Déclarations des fonctions ###################
 
 def norm(x):
     """Fonction qui calcule la norme euclidienne d'un vecteur
@@ -210,7 +210,7 @@ colnames = A.columns
 pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64')), index = colnames)
 
 print("Valeurs de page rank:")
-print(pr.sort_values(by=0, ascending=False)*100)
+print(pr.sort_values(by=0, ascending=False))
 print("\nSomme des valeurs de pagerank: ", pr.sum()[0])
 
 print("\n"*2)
@@ -221,7 +221,7 @@ pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.15, tol=0.01), index 
 stop = time.time()
 duree = stop - start
 print("Valeurs de page rank avec d=0.15 et tol=0.01:")
-print(pr.sort_values(by=0, ascending=False)*100)
+print(pr.sort_values(by=0, ascending=False))
 print("Temps d'exécution: ", duree, "s")
 
 start = time.time()
@@ -229,7 +229,7 @@ pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.15, tol=0.0001), inde
 stop = time.time()
 duree = stop - start
 print("\nValeurs de page rank avec d=0.15 et tol=0.0001:")
-print(pr.sort_values(by=0, ascending=False)*100)
+print(pr.sort_values(by=0, ascending=False))
 print("Temps d'exécution: ", duree, "s")
 
 start = time.time()
@@ -237,7 +237,7 @@ pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.85, tol=0.01), index 
 stop = time.time()
 duree = stop - start
 print("\nValeurs de page rank avec d=0.85 et tol=0.01:")
-print(pr.sort_values(by=0, ascending=False)*100)
+print(pr.sort_values(by=0, ascending=False))
 print("Temps d'exécution: ", duree, "s")
 
 start = time.time()
@@ -245,48 +245,8 @@ pr = pd.DataFrame(pagerank(A.to_numpy(dtype='float64'),d=0.85, tol=0.0001), inde
 stop = time.time()
 duree = stop - start
 print("\nValeurs de page rank avec d=0.85 et tol=0.0001:")
-print(pr.sort_values(by=0, ascending=False)*100)
+print(pr.sort_values(by=0, ascending=False))
 print("Temps d'exécution: ", duree, "s")
-
-
-
-
-
-################# Exercice du travail personnel ##################
-
-# #Matrice d'adjacence de l'exercice 1
-# A_ex1 = np.array([[0, 1, 1, 0, 0, 0],
-#                   [0, 0, 0, 0, 0, 0],
-#                   [1, 1, 0, 0, 1, 0],
-#                   [0, 0, 0, 0, 1, 1],
-#                   [0, 0, 0, 1, 0, 1],
-#                   [0, 0, 0, 1, 0, 0]], dtype='float64')
-
-
-# print("\n"*2)
-
-# #Calcul des valeurs de pagerank
-# pr=pagerank(A_ex1, 0.85)
-# print("\nValeurs de page rank:\n\t", pr)
-# print("\tSomme des valeurs de pagerank:", pr.sum())
-
-# #Calcul des valeurs de pagerank personnalisé pour le noeud 1
-# personalization = np.zeros(A_ex1.shape[0])
-# personalization[0] = 1
-# pr=personalized_pagerank(A_ex1, personalization, 0.85)
-# print("\nValeurs de page rank avec personnalisation noeud 1:\n\t", pr)
-# print("\tSomme des valeurs de pagerank:", pr.sum())
-
-
-# #Calcul des valeurs de pagerank personnalisé pour le noeud 5
-# personalization = np.zeros(A_ex1.shape[0])
-# personalization[4] = 1
-# pr=personalized_pagerank(A_ex1, personalization, 0.85)
-# print("\nValeurs de page rank avec personnalisation noeud 5:\n\t", pr)
-# print("\tSomme des valeurs de pagerank:", pr.sum())
-
-
-# print("\n"*2)
 
 
 
@@ -296,23 +256,30 @@ print("Temps d'exécution: ", duree, "s")
 
 # from fast_pagerank import pagerank_power
 
-# pr=pagerank(A_ex1, 0.85)
+# A = np.array([[0, 1, 1, 0, 0, 0],
+#               [0, 0, 0, 0, 0, 0],
+#               [1, 1, 0, 0, 1, 0],
+#               [0, 0, 0, 0, 1, 1],
+#               [0, 0, 0, 1, 0, 1],
+#               [0, 0, 0, 1, 0, 0]], dtype='float64')
+
+# pr=pagerank(A, 0.85)
 # print("\nPagerank:", pr)
 # print(pr.sum())
 
-# pr=pagerank_power(A_ex1, p=0.85)
+# pr=pagerank_power(A, p=0.85)
 # print("\nVérification pagerank:", pr)
 
 
-# personalization = np.zeros(A_ex1.shape[0])
+# personalization = np.zeros(A.shape[0])
 # personalization[4] = 1
-# pr=personalized_pagerank(A_ex1, personalization, 0.85)
-# print("Personnalisation noeud 1:", pr)
+# pr=personalized_pagerank(A, personalization, 0.85)
+# print("Personnalisation noeud 5:", pr)
 
 
-# personalization = np.zeros(A_ex1.shape[0])
+# personalization = np.zeros(A.shape[0])
 # personalization[4] = 1
-# pr=pagerank_power(A_ex1, p=0.85, personalize=personalization)
+# pr=pagerank_power(A, p=0.85, personalize=personalization)
 # print("Vérification personnalisation noeud 5:", pr)
 
 # print("\n"*2)
