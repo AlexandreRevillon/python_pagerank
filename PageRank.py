@@ -43,7 +43,7 @@ def import_tsv():
         Liste: Liste de listes contenant les données du fichier tsv
     """
     data = list()
-    with open("wikispeedia_paths-and-graph/paths_finished_2.tsv") as fd:
+    with open("wikispeedia_paths-and-graph/paths_finished.tsv") as fd:
         rd = csv.reader(fd, delimiter="\t", quotechar='"')
         for row in rd:
             try:
