@@ -25,7 +25,7 @@ python <chemin_nom_du_fichier>/PageRank.py --tsv-path <chemin_du_fichier_tsv> [o
 ```
 ou
 ```
-python <chemin_nom_du_fichier>//PageRank.py -p <chemin_du_fichier_tsv> [options]
+python <chemin_nom_du_fichier>/PageRank.py -p <chemin_du_fichier_tsv> [options]
 ```
 
 Les options disponibles sont les suivantes :
