@@ -9,6 +9,8 @@ Assurez-vous d'avoir installé les bibliothèques suivantes pour pouvoir exécut
 - scipy
 - igraph
 - pandas
+
+
 Vous pouvez les installer à l'aide de pip:
 
 ```
