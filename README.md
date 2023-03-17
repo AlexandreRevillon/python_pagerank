@@ -1,41 +1,63 @@
-# Big data - Projet PageRank
+# README.md
 
+## Introduction
+Ce programme est conçu pour calculer le PageRank des pages parcourus par les joueurs de Wikispeedia à partir d'un fichier TSV des chemins réalisé. Il permet également de personnaliser le PageRank à l'aide de vecteurs de personnalisation. Le programme prend en charge plusieurs arguments pour personnaliser la tolérance, le facteur de dumping, le nombre de nœuds à afficher et le chemin d'accès au fichier TSV.
 
-
-## Strucutre du fichier python
-
-Le fichier python est structuré en 4 partie:
-- L'import des librairies
-- Les fonctions
-- Le programme principal
-- Les tests réalisés (cette partie est commantée afin qu'elle ne soit pas exécutée)
-
-## Exécution du programme
-
-Afin de pouvoir exéctuer le programme, il faut en amont avoir installé les librairie utilisée par le fichier python.
-Les librairies sont les suivantes : numpy, scipy, igraph et pandas
-
-Pour les installer, il faut exécuter les lignes de code suivantes dans un terminal:
+## Prérequis
+Assurez-vous d'avoir installé les bibliothèques suivantes pour pouvoir exécuter le programme :
+- numpy
+- scipy
+- igraph
+- pandas
+Vous pouvez les installer à l'aide de pip:
 
 ```
-pip install numpy
-pip install scipy
-pip install igraph
-pip install pandas
+pip install numpy scipy python-igraph pandas
 ```
 
-Une fois toutes les librairies installée, il suffit de lancer le programme avec la commande suivante:
-```
-python [path]/PageRank.py
-```
-Attention à bien remplacer ```\[path\]``` par le chemin d'accès vers le dossier ou se trouve le fichier python.
+## Utilisation
+Pour utiliser le programme, exécutez le fichier Python avec les arguments appropriés.
 
+```
+python <chemin_nom_du_fichier>.py --tsv-path <chemin_du_fichier_tsv> [options]
+```
+ou
+```
+python <chemin_nom_du_fichier>.py -p <chemin_du_fichier_tsv> [options]
+```
+
+Les options disponibles sont les suivantes :
+
+-d ou --dumping-factor : Le facteur de dumping (entre 0 et 1). Valeur par défaut : 0.85
+-t ou --tolerance : La tolérance pour les calculs (ex : 0.0001). Valeur par défaut : 0.0001
+-p ou --tsv-path : Le chemin d'accès du fichier TSV. (Obligatoire)
+-k ou --k-nodes : Le nombre de nœuds à afficher. Valeur par défaut : 10
+-c ou --custom-pagerank : Activez cette option pour personnaliser le PageRank. Non activée par défaut.
+
+### Exemple
+```
+python <nom_du_fichier>.py --tsv-path data.tsv -d 0.9 -t 0.00001 -k 20 -c
+```
+Cet exemple utilise un facteur de dumping de 0.9, une tolérance de 0.00001, affiche 20 nœuds et active la personnalisation du PageRank.
+
+## Fonctions principales
+Le programme contient les fonctions suivantes :
+
+norm(x): Calcule la norme euclidienne d'un vecteur.
+import_tsv(filename): Importe le fichier TSV et le transforme en liste de listes.
+points_et_transitions(filename): Renvoie la liste des points et la liste des transitions du graphe.
+import_adjacence_graph(filename): Renvoie la matrice d'adjacence du graphe.
+pagerank(matrice_adjacence, d=0.85, max_iter=100, tol=1e-6): Calcule les valeurs PageRank d'une matrice d'adjacence.
+personalized_pagerank(matrice_adjacence, v, d=0.85, max_iter=100, tol=1e-6): Calcule les valeurs PageRank d'une matrice d'adjacence à partir d'un vecteur de personnalisation.
+Licence
+Ce programme est distribué sous la licence MIT.
 
 
 ## Résultats
 
-Ce programme donne en sortie les score de page rank du graph formé par les chemins réalisé par les joueurs de Wikispeedia (uniquement du fichier paths_finished).
+Ce programme donne en sortie les scores de page rank des ```k noeuds``` du graph.
 
-Ce programme calcul les valeurs de pagerank pour différentes combinaisons de paramètres.
+Lorsque l'option de personnalisation est activé, le programme donne ensortie des même scores, ainsi que les  ```k noeuds``` de 2 personnalisations distinctes:
+- personnalisation des 5 premières pages (selon le page rank non personnalisée)
+- personnalisation des 5 dernières pages (selon le page rank non personnalisée)
 
-Il exécute aussi une version personnalisé de l'algorithme de pagerank.
