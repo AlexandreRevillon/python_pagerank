@@ -21,11 +21,11 @@ pip install numpy scipy python-igraph pandas
 Pour utiliser le programme, exécutez le fichier Python avec les arguments appropriés.
 
 ```
-python <chemin_nom_du_fichier>.py --tsv-path <chemin_du_fichier_tsv> [options]
+python <chemin_nom_du_fichier>/PageRank.py --tsv-path <chemin_du_fichier_tsv> [options]
 ```
 ou
 ```
-python <chemin_nom_du_fichier>.py -p <chemin_du_fichier_tsv> [options]
+python <chemin_nom_du_fichier>PageRank.py -p <chemin_du_fichier_tsv> [options]
 ```
 
 Les options disponibles sont les suivantes :
