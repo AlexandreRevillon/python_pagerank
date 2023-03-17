@@ -44,13 +44,17 @@ Cet exemple utilise un facteur de dumping de 0.9, une tolérance de 0.00001, aff
 Le programme contient les fonctions suivantes :
 
 norm(x): Calcule la norme euclidienne d'un vecteur.
+
 import_tsv(filename): Importe le fichier TSV et le transforme en liste de listes.
+
 points_et_transitions(filename): Renvoie la liste des points et la liste des transitions du graphe.
+
 import_adjacence_graph(filename): Renvoie la matrice d'adjacence du graphe.
+
 pagerank(matrice_adjacence, d=0.85, max_iter=100, tol=1e-6): Calcule les valeurs PageRank d'une matrice d'adjacence.
+
 personalized_pagerank(matrice_adjacence, v, d=0.85, max_iter=100, tol=1e-6): Calcule les valeurs PageRank d'une matrice d'adjacence à partir d'un vecteur de personnalisation.
-Licence
-Ce programme est distribué sous la licence MIT.
+
 
 
 ## Résultats
