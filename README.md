@@ -8,7 +8,7 @@ Assurez-vous d'avoir installé les bibliothèques suivantes pour pouvoir exécut
 - numpy
 - scipy
 - igraph
-- pandas
+- pandas  
 
 
 Vous pouvez les installer à l'aide de pip:
