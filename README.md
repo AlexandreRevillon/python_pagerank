@@ -28,11 +28,11 @@ python <chemin_nom_du_fichier>.py -p <chemin_du_fichier_tsv> [options]
 
 Les options disponibles sont les suivantes :
 
--d ou --dumping-factor : Le facteur de dumping (entre 0 et 1). Valeur par défaut : 0.85
--t ou --tolerance : La tolérance pour les calculs (ex : 0.0001). Valeur par défaut : 0.0001
--p ou --tsv-path : Le chemin d'accès du fichier TSV. (Obligatoire)
--k ou --k-nodes : Le nombre de nœuds à afficher. Valeur par défaut : 10
--c ou --custom-pagerank : Activez cette option pour personnaliser le PageRank. Non activée par défaut.
+- -d ou --dumping-factor : Le facteur de dumping (entre 0 et 1). Valeur par défaut : 0.85
+- -t ou --tolerance : La tolérance pour les calculs (ex : 0.0001). Valeur par défaut : 0.0001
+- -p ou --tsv-path : Le chemin d'accès du fichier TSV. (Obligatoire)
+- -k ou --k-nodes : Le nombre de nœuds à afficher. Valeur par défaut : 10
+- -c ou --custom-pagerank : Activez cette option pour personnaliser le PageRank. Non activée par défaut.
 
 ### Exemple
 ```
